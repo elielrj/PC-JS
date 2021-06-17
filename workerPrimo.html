@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+  <h1>Primo Worker</h1>
+  <p>Sequencia de Números Primos: <output id="result"></output></p>
+  <button onclick="startWorker()">Inicia números primos</button>
+  <button onclick="stopWorker()">Para numeros primos</button>
+
+
+  <h1>Numeros Primos Sequencial</h1>
+  <p>Sequencia de números primos: <output id="result1"></output></p>
+  <button onclick="primo()">Inicia números primos sequencial</button>
+  <button onclick="paraPrimo()">Para números primos sequencial</button>
+
+
+
+  <script>
+
+    var w;
+
+    function startWorker() {
+      //verifica se browser suporta worker
+      if (typeof (Worker) !== "undefined") {
+        //instancia worker
+        if (typeof (w) == "undefined") {
+          w = new Worker('workerPrimo.js');
+        }
+        //define o manipulador de eventos
+        w.onmessage = function (event) {
+          document.getElementById("result").textContent =
+            document.getElementById("result").textContent + ' ' + event.data
+        };
+      } else {
+        document.getElementById("result").innerHTML = "Seu browser não suporta web workers...";
+      }
+    }
+
+    function stopWorker() {
+      w.terminate();
+      //w = "undefined";
+    }
+
+
+    var result1 = document.getElementById("result1");
+
+    //função que simula tempo de grande carga de processamento
+    function sleep(milliseconds) {
+      const date = Date.now();
+      let currentDate = null;
+      do {
+        currentDate = Date.now();
+      } while (currentDate - date < milliseconds);
+    }
+
+    //função que, acionada pelo devido botão, para sequência
+    function paraPrimo() {
+      parar = 1;
+    }
+
+    //a variável parar é utilizada para parar a sequencia
+    var a = 1, divisores, parar = 0;
+
+    //------------função p/ descobrir se o Nr é primo
+    function primo() {
+      while (parar != 1) {
+        divisores = 0;
+        //--------a é o número da sequência até a função parar executar
+        a++;
+
+        //--------verifica qts divisores
+        for (var i = 1; i < a; i++) {
+          if (a % i == 0)
+            divisores++;
+        }
+
+        //---------se o nr de div for maior q 1 não será exibido
+        if (divisores == 1)
+          result1.textContent += ' ' + a;
+
+        sleep(500);
+        //esta condição visa impedir um processamento infinito
+        if (a > 20)
+          break;
+      }
+    }
+    
+  </script>
+
+</body>
+
+</html>
